@@ -4,23 +4,25 @@
 #include <stdint.h>
 #include <string>
 
+#include "absl/types/span.h"
+
 namespace i2c {
 
 class Bus {
-   public:
-    Bus(std::string i2c_dev);
-    ~Bus();
+public:
+  Bus(std::string i2c_dev);
+  ~Bus();
 
-    bool Write(uint8_t slave_addr, const uint8_t* data, uint32_t length);
-    bool WriteRegister(uint8_t slave_addr, uint8_t offset, const uint8_t* data,
-                       uint32_t length);
-    bool Read(uint8_t slave_addr, uint8_t* data, uint32_t length);
-    bool ReadRegister(uint8_t slave_addr, uint8_t offset, uint8_t* data,
-                      uint32_t length);
+  bool Write(uint8_t slave_addr, absl::Span<const uint8_t> data);
+  bool WriteRegister(uint8_t slave_addr, uint8_t register_addr,
+                     absl::Span<const uint8_t> data);
+  bool Read(uint8_t slave_addr, absl::Span<uint8_t> *out_data);
+  bool ReadRegister(uint8_t slave_addr, uint8_t register_addr,
+                    absl::Span<uint8_t> *out_data);
 
-   private:
-    int bus_file_;
+private:
+  int bus_file_;
 };
-}
+} // namespace i2c
 
 #endif
